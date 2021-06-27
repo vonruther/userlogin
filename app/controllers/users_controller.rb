@@ -1,7 +1,8 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show edit update destroy ] 
-  before_action :require_login, except: [:new]
-
+  
+  skip_before_action :require_login, only: [:new, :create]
+  
   # GET /users or /users.json
   def index
     @users = User.all
@@ -9,6 +10,10 @@ class UsersController < ApplicationController
 
   # GET /users/1 or /users/1.json
   def show
+    @posts = @user.posts.all
+    if current_user.id != @user.id
+      @posts = @user.posts.display_public
+    end
   end
 
   # GET /users/new
@@ -65,6 +70,6 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:email, :password, :password_confirmation)
+      params.require(:user).permit(:name, :gender, :age, :address, :email, :password, :password_confirmation)
     end
 end

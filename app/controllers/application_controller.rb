@@ -1,25 +1,24 @@
 class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :exception
-  include SessionsHelper
-
-  
+  before_action :require_login
+  helper_method :current_user
 
   private
 
   def require_login
-    unless logged_in?
-      flash[:error] = "You must be logged in to access this section"
-      redirect_to root_url # halts request cycle
-    end
+    flash[:danger] = "You do not have authorization to visit this page"
+    redirect_to login_path unless session.include? :user_id
   end
 
   def current_user
-    if session[:user_id]
-      @current_user ||= User.find(session[:user_id])
-    else
-      @current_user = nil
-    end
+    @current_user ||= User.find(session[:user_id]) if session[:user_id]
   end
 
+  def correct_user
+   if current_user.id != Post.find(params[:id]).user_id
+     flash[:danger] = "You do not have authorization to edit this post" #if not logged in as the owner of the post
+     redirect_to posts_path
+   end
+  end
 end

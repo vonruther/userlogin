@@ -1,30 +1,179 @@
-
-
-<%= simple_form_for @post do |f| %>
-  <% if @post.errors.any? %>
-    <div id="error_explanation">
-      <h2>
-        <%= "#{pluralize(@post.errors.count, "error")} prohibited this post from being saved:" %>
-      </h2>
-      <ul>
-        <% @post.errors.full_messages.each do |msg| %>
-          <li>
-            <%= msg %>
-          </li>
-          <% end %>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FaceClone</title>
+</head>
+<body>
+  <!-- nav -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="index.html">FistBook</a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li><%= link_to "Home", posts_path %></li>
+        <li><%= link_to "Profile", controller: "users", action: "show", id: current_user.id %></li>
+        <li><%= link_to "Log Out", logout_path %></li>
       </ul>
     </div>
-  <% end %>
+  </nav>
+  <!-- ./nav -->
 
-  <div class="form-group">
-    <%= f.input :title, class: "form-control" %>
-  </div>
+  <!-- main -->
+  <main class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <!-- profile brief -->
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4><%= current_user.name %></h4>
+            <p>Email: <%= current_user.email %></p>
+            <p>Address: <%= current_user.address %></p>
+          </div>
+        </div>
+        <!-- ./profile brief -->
 
-  <div class="form-group">
-    <%= f.input :body, :as => :ckeditor, input_html: {:ckeditor => {:toolbar => 'FULL'}}, class: "form-control" %>
-  </div>
+        <!-- friend requests -->
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4>friend requests</h4>
+            <ul>
+              <li>
+                <a href="#">johndoe</a> 
+                <a class="text-success" href="#">[accept]</a> 
+                <a class="text-danger" href="#">[decline]</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- ./friend requests -->
+      </div>
 
-  <div class="form-group">
-    <%= f.button :submit %>
-  </div>
-<% end %>
+      <div class="col-md-6">
+        <!-- user profile -->
+
+        <!-- user profile -->
+
+        <!-- timeline -->
+        <%= simple_form_for @post do |f| %>
+        <% if @post.errors.any? %>
+        <div id="error_explanation">
+          <h2>
+            <%= "#{pluralize(@post.errors.count, "error")} prohibited this post from being saved:" %>
+          </h2>
+          <ul>
+            <% @post.errors.full_messages.each do |msg| %>
+            <li>
+              <%= msg %>
+            </li>
+            <% end %>
+          </ul>
+        </div>
+        <% end %>
+
+        <div style="text-align:center;">
+          <div class="title">
+            <h1>Live Blog</h1>
+            <p>Editor View</p>
+          </div>
+          <p><strong>Fill and submit the form below to create a new post</strong></p>
+          <br />
+        </div>
+
+        <div class="form-group">
+          <label for="title">Post Title</label>
+          <%= f.input_field :title, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <label for="body">Content</label>
+          <%= f.input_field :body, class: "form-control", rows: "10", cols: "30" %>
+        </div>
+        <div class="form-group">
+          <%= f.check_box :display_public, :id => "public_check", style: "float: left;" %>
+          <label for="display_public" class="checkbox-label">Public</label>
+        </div>
+        
+        <h4>People who can see</h4>
+        
+        <% @users.each do |user| %>
+        <% if user.id != current_user.id %>
+          <%= check_box_tag 'user_ids[]', user.id -%>
+          <label for="user_ids" class="checkbox-label", style="text-align: auto; margin-top: -22px;">
+            <%= user.name %>
+          </label>
+          <% end %>
+        <% end %>
+        
+        <%= f.hidden_field :user_id, class: "form-control", value: current_user[:id] %>
+        <br />
+
+        <div class="from-group" style="text-align:center;">
+          <%= f.button :submit, class: "btn btn-primary btn-lg"%>
+        </div>
+
+
+        <% end %>
+        <!-- ./timeline -->
+      </div>
+      <div class="col-md-3">
+        <!-- friends -->
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4>Friends</h4>
+            <ul>
+              <li>
+                <a href="#">peterpan</a> 
+                <a class="text-danger" href="#">[unfriend]</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- ./friends -->
+      </div>
+    </div>
+  </main>
+  <!-- ./main -->
+
+  <!-- footer -->
+  <footer class="container text-center">
+    <ul class="nav nav-pills pull-right">
+      <li>FistBook - Made by [your name here]</li>
+    </ul>
+  </footer>
+  <!-- ./footer -->
+  <script type="text/javascript">
+    const checkbox = document.getElementById('public_check')
+    var defaultUser = document.getElementsByName("user_ids[]");
+    console.log(checkbox.val);
+    if(checkbox.checked == true) {
+      for (i = 0; i < defaultUser.length; i++) {
+            defaultUser[i].disabled = true;
+        }
+    }
+    else {
+      for (i = 0; i < defaultUser.length; i++) {
+            defaultUser[i].disabled = false;
+        }
+    }
+
+    checkbox.addEventListener('change', (event) => {
+      console.log(checkbox.val);
+      var x = document.getElementsByName("user_ids[]");
+      var i;
+      if (event.currentTarget.checked) {
+        for (i = 0; i < x.length; i++) {
+            x[i].disabled = true;
+            x[i].checked = false;
+        }
+      }
+      else {
+        for (i = 0; i < x.length; i++) {
+            x[i].disabled = false;
+        }
+      }
+    })
+  </script>
+</body>
+</html>
+
+<%= link_to 'Back', posts_path %>

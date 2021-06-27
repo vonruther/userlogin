@@ -1,13 +1,173 @@
-<p id="notice"><%= notice %></p>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FaceClone</title>
+
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+  <!-- nav -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="index.html">FistBook</a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li><%= link_to "Home", posts_path %></li>
+        <li><%= link_to "Profile", controller: "users", action: "show", id: current_user.id %></li>
+        <li><%= link_to "Log Out", logout_path %></li>
+      </ul>
+    </div>
+  </nav>
+  <!-- ./nav -->
+
+  <!-- main -->
+  <main class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <!-- profile brief -->
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4><%= current_user.name %></h4>
+            <p>Email: <%= current_user.email %></p>
+            <p>Address: <%= current_user.address %></p>
+          </div>
+        </div>
+        <!-- ./profile brief -->
+
+        <!-- friend requests -->
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4>friend requests</h4>
+            <ul>
+              <li>
+                <a href="#">johndoe</a> 
+                <a class="text-success" href="#">[accept]</a> 
+                <a class="text-danger" href="#">[decline]</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- ./friend requests -->
+      </div>
+      <div class="col-md-6">
+        <!-- post -->
+        <h1>Posts<button class="btn btn-success" style="position: absolute; right: 0;" onclick="location.href='/posts/new'">New Post</button></h1>
+        <!-- search -->
+        <%= form_tag(posts_path, method: :get) do %>
+        <div class="input-group">
+          <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "Search" %>
+          <!-- <input class="form-control" type="text" name="content" placeholder="Make a post..."> -->
+          <span class="input-group-btn">
+            <%= submit_tag ("Search"), class: "btn btn-primary" %>
+            <!-- <button class="btn btn-success" type="submit" name="post">Post</button> -->
+          </span>
+        </div>
+        <% end %>
+
+        <hr>
+        <!-- ./search -->
+        <div>
+          <% @posts.each do |post| %>
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <p>Title: <%= link_to post.title, post %></p>
+              <p>Content: <%= post.body %></p>
+            </div>
+            <div class="panel-footer">
+              <span>posted <%= post.created_at %> by <%= link_to post.user.name, controller: "users", action: "show", id: post.user.id %></span> 
+              <!-- <span class="pull-right"><a class="text-danger" href="#">[delete]</a></span> -->
+            </div>
+          </div>
+          <% end %>
+          <!-- ./post -->
+        </div>
+        <!-- ./feed -->
+      </div>
+      <div class="col-md-3">
+        <!-- add friend -->
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4>add friend</h4>
+            <ul>
+              <li>
+                <a href="#">alberte</a> 
+                <a href="#">[add]</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- ./add friend -->
+
+        <!-- friends -->
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4>friends</h4>
+            <ul>
+              <li>
+                <a href="#">peterpan</a> 
+                <a class="text-danger" href="#">[unfriend]</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- ./friends -->
+      </div>
+    </div>
+  </main>
+  <!-- ./main -->
+
+  <!-- footer -->
+  <footer class="container text-center">
+    <ul class="nav nav-pills pull-right">
+      <li>FistBook - Made by [your name here]</li>
+    </ul>
+  </footer>
+  <!-- ./footer -->
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/script.js"></script>
+</body>
+</html>
+
+
+<!-- <p id="notice"><%= notice %></p>
+<!DOCTYPE html>
+<html>
+<head>
+ <title>Facebook</title>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head> 
+<body>
+ <div class=" header1">
+   <div id="name" class="header1"><br>Fistbook Master</div>
+   <div id="searcharea" class = "header1">
+     <input placeholder = "search here...." type= "text" id="searchbox"/></div>
+     <div id="profilearea" class="header1">Profile</div>
+     <div id="profilearea1" class="header1">|</div>
+     <div id="profilearea2" class="header1">Home</div>
+   </div>
+<br><br><br>
 
 Logged in as <%= current_user.email %>.
 <%= link_to "Log Out", logout_path %>
 
 <h1>Posts</h1>
 
+<h4>Search by Posts</h4>
+<%= form_tag(posts_path, method: :get) do %>
+  <%= text_field_tag(:search, params[:search]) %>
+  <%= submit_tag ("Search") %>
+<% end %>
+
+<br>    
+
 <table>
   <thead>
     <tr>
+      <th>Author</th>
       <th>Title</th>
       <th>Body</th>
       <th colspan="3"></th>
@@ -17,7 +177,9 @@ Logged in as <%= current_user.email %>.
   <tbody>
     <% @posts.each do |post| %>
       <tr>
-        <td><%= post.title %></td>
+        <td><%= link_to post.user.name, controller: "users", action: "show", id: post.user.id %></td>
+        <td><a href="<%= posts_path %>"><%= post.user.name %></a></td>
+        <td><%= link_to post.title, post %></td>
         <td><%= post.body %></td>
         <td><%= link_to 'Show', post %></td>
         <td><%= link_to 'Edit', edit_post_path(post) %></td>
@@ -30,3 +192,6 @@ Logged in as <%= current_user.email %>.
 <br>
 
 <%= link_to 'New Post', new_post_path %>
+
+</body>
+</html> -->

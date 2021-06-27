@@ -1,14 +1,151 @@
-<p id="notice"><%= notice %></p>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FaceClone</title>
+</head>
+<body>
+  <!-- nav -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="index.html">FistBook</a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li><%= link_to "Home", posts_path %></li>
+        <li><%= link_to "Profile", controller: "users", action: "show", id: current_user.id %></li>
+        <li><%= link_to "Log Out", logout_path %></li>
+      </ul>
+    </div>
+  </nav>
+  <!-- ./nav -->
 
-<p>
-  <strong>Title:</strong>
-  <%= @post.title %>
-</p>
+  <!-- main -->
+  <main class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <!-- edit profile -->
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4>Edit profile</h4>
+            <form method="post" action="">
+              <div class="form-group">
+                <input class="form-control" type="text" name="status" placeholder="Status" value="">
+              </div>
 
-<p>
-  <strong>Body:</strong>
-  <%= @post.body %>
-</p>
+              <div class="form-group">
+                <input class="form-control" type="text" name="location" placeholder="Location" value="">
+              </div>
 
-<%= link_to 'Edit', edit_post_path(@post) %> |
-<%= link_to 'Back', posts_path %>
+              <div class="form-group">
+                <input class="btn btn-primary" type="submit" name="update_profile" value="Save">
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- ./edit profile -->
+      </div>
+      <div class="col-md-6">
+        <!-- user profile -->
+        <div class="media">
+          <div class="media-left">
+            <img src="img/my_avatar.png" class="media-object" style="width: 128px; height: 128px;">
+          </div>
+          <div class="media-body">
+            <h2 class="media-heading"><%= @post.user.name %></h2>
+            <p>Email: <%= @post.user.email %></p>
+            <p>Address: <%= @post.user.address %></p>
+          </div>
+        </div>
+        <!-- user profile -->
+
+        <hr>
+
+        <!-- timeline -->
+        <div>
+          <!-- post -->
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <% if @post.display_public == true %>
+              <i style="color: blue;margin-left: 480px;">Public</i>
+              <% else %>
+              <i style="color: blue;margin-left: 480px;">Private</i>
+              <% end %>
+
+              <p>Title: <%=h @post.title %></p>
+              <p>Content: <%=h @post.body %></p>
+            </div>
+            <div class="panel-footer">
+              <span>posted <%= @post.created_at %> by <%= @post.user.name %></span>
+              <% if current_user.id == @post.user_id %>
+              <span class="pull-right"><%= link_to '[edit]', edit_post_path(@post) %></td>
+                <span class="pull-right"><%= link_to "[delete]", @post, method: :delete, data: { confirm: 'Are you sure?' }, class: "text-danger" %></span>
+                <% end %>
+                <!-- <span class="pull-right"><a class="text-danger" href="#">[delete]</a></span> -->
+              </div>
+              
+              <% @post.comments.each do |comment| %>
+              <div class="panel-body">
+                <p>
+                  <b><%= comment.user.name %></b><br />
+                  <%= comment.body %><br />
+                </p>
+              </div>
+              <div class="panel-footer">
+                <p>
+                  <%= link_to 'Like', class: "a-primary" %>
+                  <%= link_to 'Reply', class: "a-primary" %>
+                  <%= distance_of_time_in_words(comment.created_at, Time.now) %>
+                </p>
+              </div>
+              
+              <% end %>
+
+              <%= form_for [@post, Comment.new] do |form| %>
+              <p>
+                <%= form.hidden_field :user_id, value: current_user[:id] %>
+                <br>
+                <%= form.text_area :body, placeholder: "Write a comment...", :cols => 65, class: "textarea" %>
+              </p>
+
+              <p >
+                <%= form.submit "Add Comment", class: "textarea" %>
+              </p>
+              <% end %>
+            </div>
+            <!-- ./post -->
+          </div>
+          <!-- ./timeline -->
+        </div>
+        <div class="col-md-3">
+          <!-- friends -->
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <h4>Friends</h4>
+              <ul>
+                <li>
+                  <a href="#">peterpan</a> 
+                  <a class="text-danger" href="#">[unfriend]</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- ./friends -->
+        </div>
+      </div>
+    </main>
+    <!-- ./main -->
+
+    <!-- footer -->
+    <footer class="container text-center">
+      <ul class="nav nav-pills pull-right">
+        <li>FaceClone - Made by [your name here]</li>
+      </ul>
+    </footer>
+    <!-- ./footer -->
+
+  </body>
+  </html>
+
+  <%= link_to 'Back', posts_path %>
+
+

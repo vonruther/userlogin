@@ -81,6 +81,19 @@ a {
     <p>Please fill in this form to create an account.</p>
     <hr>
 
+    <label for="name"><b>Name</b></label>
+    <%= form.text_field :name, id: :user_name, placeholder: "Enter Name" %>
+
+    <label for="gender"><b>Gender</b></label>
+    <%= form.radio_button :gender, "Male", :checked => true %><p>Male</p>
+    <%= form.radio_button :gender, "Female" %><p>Female</p>
+
+    <label for="age"><b>Age</b></label>
+    <%= form.text_field :age, id: :user_age, placeholder: "Enter Age" %>
+
+    <label for="address"><b>Address</b></label>
+    <%= form.text_field :address, id: :user_address, placeholder: "Enter Address" %>
+
     <label for="email"><b>Email</b></label>
     <%= form.text_field :email, id: :user_email, placeholder: "Enter Email" %>
     <!-- <input type="text" placeholder="Enter Email" name="email" id="email" required> -->

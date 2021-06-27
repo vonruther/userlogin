@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  skip_before_action :require_login, only: [:create, :new]
+  
   def new
   end
 
@@ -7,7 +9,7 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:password])
       session[:user_id] = user.id
       id = session[:user_id]
-      redirect_to '/posts', notice: "Logged in!"
+      redirect_to :controller => "posts", :action => "index"
     else
       flash.now[:alert] = "Email or password is invalid"
       render "new"

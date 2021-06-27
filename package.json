@@ -3,3 +3,5 @@
   "private": true,
   "dependencies": {}
 }
+
+yarn add @fortawesome/fontawesome-free
